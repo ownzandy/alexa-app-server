@@ -228,7 +228,7 @@ var appServer = function(config) {
 			if(config.privateKey != undefined && config.certificate != undefined && config.httpsPort != undefined) { //Ensure that all of the needed properties are set
 				var privateKeyFile = 'sslcert/' + config.privateKey;
 				var certificateFile = 'sslcert/' + config.certificate;
-        var chainFile = (config.privateKey != undefined) ? 'sslcert/' + config.chain : undefined; //optional chain bundle
+        var chainFile = (config.chain != undefined) ? 'sslcert/' + config.chain : undefined; //optional chain bundle
 
 				if(fs.existsSync(privateKeyFile) && fs.existsSync(certificateFile)) { //Make sure the key and cert exist.
 
@@ -236,7 +236,9 @@ var appServer = function(config) {
 					var certificate = fs.readFileSync(certificateFile  , 'utf8');
           var chain = (chainFile != undefined) ? fs.readFileSync(chainFile  , 'utf8') : undefined; //read optional chain bundle
 
-						if(privateKey != undefined && certificate != undefined) {
+            if (chain == undefined && chainFile != undefined) {
+						  self.log("Failed to load chain from /sslcert.");
+            } else if (privateKey != undefined && certificate != undefined) {
 							var credentials = {key: privateKey, cert: certificate};
               if (chain != undefined) { credentials.ca = chain; } //if chain is used the add to credentials
 
@@ -247,8 +249,7 @@ var appServer = function(config) {
                 self.log("Failed to listen via HTTPS Error: " + error);
               }
 						} else {
-						self.log("Failed to load privateKey or certificate from /sslcert. HTTPS will not be enabled");
-
+						  self.log("Failed to load privateKey or certificate from /sslcert. HTTPS will not be enabled");
 						}
 
 				} else {
