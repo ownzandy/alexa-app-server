@@ -235,8 +235,12 @@ var appServer = function(config) {
 					var privateKey  = fs.readFileSync(privateKeyFile, 'utf8');
 					var certificate = fs.readFileSync(certificateFile, 'utf8');
           var chain = undefined;
-          if (chainFile != undefined && fs.existsSync(chainFile)) {
-            chain = fs.readFileSync(chainFile, 'utf8');
+          if (chainFile != undefined) {
+            if (fs.existsSync(chainFile)) {
+              chain = fs.readFileSync(chainFile, 'utf8');
+            } else {
+              self.log("chain: '/sslcert" + config.chain + "' does not exist in /sslcert.");
+            }
           }
 
           if (chain == undefined && chainFile != undefined) {
