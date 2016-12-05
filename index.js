@@ -240,7 +240,10 @@ var appServer = function(config) {
 						  self.log("Failed to load chain from /sslcert.");
             } else if (privateKey != undefined && certificate != undefined) {
 							var credentials = {key: privateKey, cert: certificate};
-              if (chain != undefined) { credentials.ca = chain; } //if chain is used the add to credentials
+              if (chain != undefined) {
+                credentials.ca = chain;
+                self.log("Using chain certificate from /sslcert.");
+              } //if chain is used the add to credentials
 
               try { //The line below can fail it the certs were generated incorrectly. But we can continue startup without HTTPS
                 https.createServer(credentials, self.express).listen(config.httpsPort); //create the HTTPS server
