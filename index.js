@@ -228,21 +228,24 @@ var appServer = function(config) {
 			if(config.privateKey != undefined && config.certificate != undefined && config.httpsPort != undefined) { //Ensure that all of the needed properties are set
 				var privateKeyFile = 'sslcert/' + config.privateKey;
 				var certificateFile = 'sslcert/' + config.certificate;
+        var chainFile = (config.privateKey != undefined) ? 'sslcert/' + config.chain : undefined; //optional chain bundle
 
 				if(fs.existsSync(privateKeyFile) && fs.existsSync(certificateFile)) { //Make sure the key and cert exist.
 
 					var privateKey  = fs.readFileSync(privateKeyFile, 'utf8');
 					var certificate = fs.readFileSync(certificateFile  , 'utf8');
+          var chain = (chainFile != undefined) ? fs.readFileSync(chainFile  , 'utf8') : undefined; //read optional chain bundle
 
 						if(privateKey != undefined && certificate != undefined) {
 							var credentials = {key: privateKey, cert: certificate};
+              if (chain != undefined) { credentials.ca = chain; } //if chain is used the add to credentials
 
-									try { //The line below can fail it the certs were generated incorrectly. But we can continue startup without HTTPS
-									https.createServer(credentials, self.express).listen(config.httpsPort); //create the HTTPS server
-									self.log("Listening on HTTPS port " + config.httpsPort);
-								}catch(error) {
-									self.log("Failed to listen via HTTPS Error: " + error);
-								}
+              try { //The line below can fail it the certs were generated incorrectly. But we can continue startup without HTTPS
+                https.createServer(credentials, self.express).listen(config.httpsPort); //create the HTTPS server
+                self.log("Listening on HTTPS port " + config.httpsPort);
+              } catch(error) {
+                self.log("Failed to listen via HTTPS Error: " + error);
+              }
 						} else {
 						self.log("Failed to load privateKey or certificate from /sslcert. HTTPS will not be enabled");
 

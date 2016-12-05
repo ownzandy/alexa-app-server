@@ -141,7 +141,10 @@ require('alexa-app-server').start({
 	privateKey:'private-key.key',
 	
 	//certificate filename. This file must reside in the sslcert folder under the root of the project. Must be set if httpsEnable = true
-	certificate:'cert.cer'
+	certificate:'cert.cer',
+
+	//chain bundle filename. This is an optional file that would reside in the sslcert folder under the root of the project. Used if present when httpsEnable = true
+	chain:'cert.ca_bundle'
 
 });
 ```
