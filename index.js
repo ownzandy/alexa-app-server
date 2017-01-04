@@ -192,6 +192,10 @@ var appServer = function(config) {
 			config.pre(self);
 		}
 
+		app.use(express.basicAuth(function(user, pass) {
+ 			return user === config.user && pass === config.password;
+		}));
+
 		// Serve static content
 		var static_dir = path.join(server_root,config.public_html || 'public_html');
 		if (fs.existsSync(static_dir) && fs.statSync(static_dir).isDirectory()) {
@@ -289,11 +293,5 @@ var appServer = function(config) {
 	return self;
 };
 
-// A shortcut start(config) method to avoid creating an instance if not needed
-appServer.start = function(config) {
-	var appServerInstance = new appServer(config);
-	appServerInstance.start();
-	return appServerInstance;
-};
 
 module.exports = appServer;
