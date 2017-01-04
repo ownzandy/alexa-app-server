@@ -7,6 +7,7 @@ var express = require('express');
 var alexa = require('alexa-app');
 var verifier = require('alexa-verifier');
 var bodyParser = require('body-parser');
+var basicAuth = require('basic-auth-connect');
 var Promise = require('bluebird');
 
 var appServer = function(config) {
@@ -192,9 +193,7 @@ var appServer = function(config) {
 			config.pre(self);
 		}
 
-		self.express.use(express.basicAuth(function(user, pass) {
- 			return user === config.user && pass === config.password;
-		}));
+		self.express.use(basicAuth(config.user, config.password));
 
 		// Serve static content
 		var static_dir = path.join(server_root,config.public_html || 'public_html');
