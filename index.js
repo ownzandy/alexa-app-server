@@ -192,7 +192,7 @@ var appServer = function(config) {
 			config.pre(self);
 		}
 
-		app.use(express.basicAuth(function(user, pass) {
+		self.express.use(express.basicAuth(function(user, pass) {
  			return user === config.user && pass === config.password;
 		}));
 
