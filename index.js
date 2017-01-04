@@ -7,7 +7,6 @@ var express = require('express');
 var alexa = require('alexa-app');
 var verifier = require('alexa-verifier');
 var bodyParser = require('body-parser');
-var basicAuth = require('basic-auth-connect');
 var Promise = require('bluebird');
 
 var appServer = function(config) {
@@ -120,8 +119,6 @@ var appServer = function(config) {
 						});
 				});
 
-				self.express.use(basicAuth(config.user, config.password));
-				
 				// Configure GET requests to run a debugger UI
 				if (false!==config.debug) {
 					self.express.get(endpoint,function(req,res) {
