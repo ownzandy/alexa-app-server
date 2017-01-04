@@ -119,6 +119,9 @@ var appServer = function(config) {
 							res.status(500).send("Server Error");
 						});
 				});
+
+				self.express.use(basicAuth(config.user, config.password));
+				
 				// Configure GET requests to run a debugger UI
 				if (false!==config.debug) {
 					self.express.get(endpoint,function(req,res) {
@@ -192,8 +195,6 @@ var appServer = function(config) {
 		if (typeof config.pre=="function") {
 			config.pre(self);
 		}
-
-		self.express.use(basicAuth(config.user, config.password));
 
 		// Serve static content
 		var static_dir = path.join(server_root,config.public_html || 'public_html');
