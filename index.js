@@ -227,9 +227,9 @@ var appServer = function(config) {
 			self.log("httpsEnabled is true. Reading HTTPS config");
 
 			if(config.privateKey != undefined && config.certificate != undefined && config.httpsPort != undefined) { //Ensure that all of the needed properties are set
-				var privateKeyFile = 'sslcert/' + config.privateKey;
-				var certificateFile = 'sslcert/' + config.certificate;
-        var chainFile = (config.chain != undefined) ? 'sslcert/' + config.chain : undefined; //optional chain bundle
+				var privateKeyFile = config.privateKey;
+				var certificateFile = config.certificate;
+        var chainFile = (config.chain != undefined) ? config.chain : undefined; //optional chain bundle
 
 				if(fs.existsSync(privateKeyFile) && fs.existsSync(certificateFile)) { //Make sure the key and cert exist.
 
@@ -240,18 +240,18 @@ var appServer = function(config) {
             if (fs.existsSync(chainFile)) {
               chain = fs.readFileSync(chainFile, 'utf8');
             } else {
-              self.log("chain: '/sslcert" + config.chain + "' does not exist in /sslcert.");
+              self.log("chain:" + config.chain + "' does not exist");
             }
           }
 
           if (chain == undefined && chainFile != undefined) {
-            self.log("Failed to load chain from /sslcert. HTTPS will not be enabled");
+            self.log("Failed to load chain. HTTPS will not be enabled");
           } else if (privateKey != undefined && certificate != undefined) {
             var credentials = {key: privateKey, cert: certificate};
 
             if (chain != undefined) { //if chain is used the add to credentials
               credentials.ca = chain;
-              self.log("Using chain certificate from /sslcert.");
+              self.log("Using chain certificate.");
             }
 
             try { //The line below can fail it the certs were generated incorrectly. But we can continue startup without HTTPS
@@ -261,7 +261,7 @@ var appServer = function(config) {
               self.log("Failed to listen via HTTPS Error: " + error);
             }
           } else {
-            self.log("Failed to load privateKey or certificate from /sslcert. HTTPS will not be enabled");
+            self.log("Failed to load privateKey or certificate. HTTPS will not be enabled");
           }
 
 				} else {
